@@ -39,8 +39,9 @@ const newGameboard = (sizeInput) => {
             typeof size !== 'number' || 
             size < 0 ||
             size > MAX_BOARD_SIZE ||
-            size % 3 !== 0
+            size % 2 === 0
         ) {
+            console.log(`_validateBoardSize(): ${size} is an invalid size`);
             return DEFAULT_SIZE;
         }
         return size;
@@ -103,6 +104,15 @@ const newGameboard = (sizeInput) => {
             }
         } else {
             return console.log(`placeMarker() ERROR: The cell in position [${row}, ${col}] does not exist`);
+        }
+        
+    }
+
+    const getCellSymbol = (row, col) => {
+        if (isValidCell(row, col)) {
+            return board[row][col].getSymbol();
+        } else {
+            console.log(`getCellSymbol() ERROR: [row: ${row}, col: ${col}] is not a valid cell`)
         }
         
     }
@@ -301,7 +311,7 @@ const newGameboard = (sizeInput) => {
 
     
 
-    return { reset, placeMarker, isCellEmpty, getBoardSize, checkLineWin };
+    return { reset, placeMarker, getCellSymbol, isCellEmpty, getBoardSize, checkLineWin };
 }
 
 const newPlayer = (aName) => {
@@ -383,6 +393,12 @@ const newGame = (configuration) => {
     const _isWinner = (player) => {
         return player.getScore() === getScoreToWin();
     }
+
+    const getPlayerInTurnSymbol = () => {
+        return getPlayerInTurn() === player1 ? 'x' : 
+               getPlayerInTurn() === player2 ? 'o' :
+               undefined;
+    }
     
     const markCell = (row, col) => {
         const player = getPlayerInTurn();
@@ -394,9 +410,7 @@ const newGame = (configuration) => {
             _isValidRow(row) &&
             _isValidColumn(col)
         ) {
-            const symbol = player === player1 ? 'x' : 
-                           player === player2 ? 'o' :
-                           undefined;
+            const symbol = getPlayerInTurnSymbol();
 
             if (Gameboard.placeMarker(row, col, symbol) === null) {
                 return;
@@ -422,6 +436,6 @@ const newGame = (configuration) => {
         }
     }
 
-    return { getBoard, getScoreToWin, getWinner, getPlayerInTurn, markCell };
+    return { getBoard, getScoreToWin, getWinner, getPlayerInTurn, getPlayerInTurnSymbol, markCell };
 
 };

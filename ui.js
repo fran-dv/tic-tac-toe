@@ -46,3 +46,90 @@ const displayBoard = (Gameboard) => {
         }
     }
 }
+
+const symbolStyles = () => {
+
+    const styles = {
+        xDefault : './images/x-symbol-default.svg',
+        oDefault : './images/o-symbol-default.svg',
+    }
+
+    let [currentX, currentO] = [styles.xDefault, styles.oDefault];
+
+    const getSymbolImgUrl = (symbol) => {
+        return symbol === 'x' ? currentX :
+               symbol === 'o' ? currentO :
+               null;
+    }
+
+    return { getSymbolImgUrl }
+}
+
+
+const appearance = symbolStyles();
+
+
+const createSymbol = (aSymbol) => {
+    aSymbol = String(aSymbol);
+    if (aSymbol === 'x' || aSymbol === 'o') {
+        const symbolImg = document.createElement('img');
+        symbolImg.setAttribute('class', 'symbol');
+        
+        const symbolImgUrl = appearance.getSymbolImgUrl(aSymbol);
+
+        symbolImg.setAttribute('src', symbolImgUrl);
+        return symbolImg;
+    } else {
+        console.log(`createSymbol() ERROR: ${aSymbol} is not valid. (only 'x' or 'o' are allowed)`);
+        return null;
+    }
+}
+
+const displayVictory = (Game) => {
+    console.log(Game.getWinner().getName() + ' won the game!!');
+}
+
+let firstClick = true;
+
+const clickOnCell = (cell, Game) => {
+
+    const [x, y] = [parseInt(cell.dataset.x), parseInt(cell.dataset.y)];
+    
+    const [row, col] = toLogicCoordinates(x, y, Game.getBoard().getBoardSize());
+    
+    if (Game.getBoard().isCellEmpty(row, col)) {
+
+        if (
+            Game.getBoard().isBoardEmpty() && 
+            !Game.Session.isFirstTurnOfRound()
+        ) {
+            displayBoard(Game.getBoard());
+            Game.Session.startNewRound();
+            return;
+        };
+
+        Game.markCell(row, col);
+        // handle UI
+        const symbolImg = createSymbol(Game.Session.getCurrentPlayerSymbol());
+        cell.appendChild(symbolImg);
+
+        Game.Session.switchTurn();
+
+        if (Game.getWinner()) {
+            displayVictory(Game);
+        }
+    }
+
+}
+
+
+const Game = newGame();
+displayBoard(Game.getBoard());
+const gameboardDiv = document.querySelector('#gameboard');
+
+gameboardDiv.addEventListener('click', function(event) {
+    const cell = event.target.closest('.cell');
+    if (cell === null) { return };
+    clickOnCell(cell, Game);
+})
+

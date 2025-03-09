@@ -29,7 +29,7 @@ body {
     display: grid;
     justify-items: center;
     grid-template-columns: repeat(var(--board-size), minmax(0, 1fr));
-    grid-template-rows: repeat(auto-fit, 1fr);
+    grid-template-rows: repeat(auto-fit, minmax(0, 1fr));
     /* grid-auto-rows: 1fr; */
     gap: var(--cells-gap);
 }
@@ -45,6 +45,6 @@ body {
 }
 
 .cell > .symbol {
-    width: 60%; 
+    width: 50%; 
     height: auto;
 }

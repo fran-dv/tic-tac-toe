@@ -103,7 +103,8 @@ const newGameboard = (sizeInput) => {
                 return null;
             }
         } else {
-            return console.log(`placeMarker() ERROR: The cell in position [${row}, ${col}] does not exist`);
+            console.log(`placeMarker() ERROR: The cell in position [${row}, ${col}] does not exist`);
+            return null;
         }
         
     }
@@ -309,9 +310,39 @@ const newGameboard = (sizeInput) => {
         );
     }
 
+    const isBoardEmpty = () => {
+        for (let row = 0; row < _getRows(); row++) {
+            for (let col = 0; col < _getCols(); col++) {
+                if (!isCellEmpty(row, col)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    const isBoardFull = () => {
+        for (let row = 0; row < _getRows(); row++) {
+            for (let col = 0; col < _getCols(); col++) {
+                if (isCellEmpty(row, col)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     
 
-    return { reset, placeMarker, getCellSymbol, isCellEmpty, getBoardSize, checkLineWin };
+    return { 
+        reset, 
+        placeMarker, 
+        getCellSymbol, 
+        isCellEmpty, 
+        getBoardSize, 
+        checkLineWin, 
+        isBoardEmpty, 
+        isBoardFull 
+    };
 }
 
 const newPlayer = (aName) => {
@@ -337,7 +368,7 @@ const newGame = (configuration) => {
     const defaultConfig = {
         player1 : newPlayer('player one'),
         player2 : newPlayer('player two'),
-        Gameboard : newGameboard(3, 3), // classic 3x3 grid
+        Gameboard : newGameboard(3, 3),
         scoreToWin : 3,
     }
 
@@ -357,14 +388,14 @@ const newGame = (configuration) => {
                 (config.player2 && _isValidPlayer(config.player2)) &&
                 config.Gameboard &&
                 (config.scoreToWin && typeof config.scoreToWin === 'number' && config.scoreToWin > 0)
-            );
+        );
     }
 
     const config = _isValidGameConfig(configuration) ? configuration : defaultConfig;
 
     const { player1, player2, Gameboard, scoreToWin } = config;
     let winner = null;
-    let playerInTurn = player1;
+    const players = [player1, player2];
 
     const getBoard = () => Gameboard;
 
@@ -380,62 +411,99 @@ const newGame = (configuration) => {
 
     const getWinner = () => winner;
 
-    const getPlayerInTurn = () => playerInTurn; 
-
-    const _toggleTurn = () => {
-        playerInTurn = playerInTurn === player1 ? player2 : player1;
-    }
-
-    const _resetTurn = (previousStarter) => {
-        playerInTurn = previousStarter === player1 ? player2 : player1;
-    }
-
     const _isWinner = (player) => {
         return player.getScore() === getScoreToWin();
     }
 
-    const getPlayerInTurnSymbol = () => {
-        return getPlayerInTurn() === player1 ? 'x' : 
-               getPlayerInTurn() === player2 ? 'o' :
-               undefined;
-    }
+    const newSession = () => {
+        const symbols = ['x', 'o'];
+        let currentRound = 1;
+        let currentPlayer = null;
+        let roundActive = false;
+        let roundWinner = null;
+        let tied = false;
+        let firstTurnOfRound = true;
+
+        const startNewRound = () => {
+            currentPlayer = players[0];
+            roundActive = true;
+            roundWinner = null;
+            tied = false;
+            firstTurnOfRound = true;
+        }
+
+        const switchTurn = () => {
+            currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
+            firstTurnOfRound = false;
+        }
+
+        const endRound = (winner = null, isTied = false) => {
+            roundActive = false;
+            roundWinner = winner;
+            tied = isTied;
+            currentRound++;
+        }
+
+        const getCurrentRound = () => currentRound;
+        const isRoundActive = () => roundActive;
+        const isFirstTurnOfRound = () => firstTurnOfRound;
+        const isTied = () => tied;
+        const getCurrentPlayer = () => currentPlayer;
+        const getCurrentPlayerSymbol = () => {
+            return currentPlayer === players[0] ? 'x' :
+                   currentPlayer === players[1] ? 'o' : 
+                   null;
+        };
+        const getRoundWinner = () => roundWinner;
+
+        return { 
+            startNewRound,
+            switchTurn,
+            endRound,
+            getCurrentRound,
+            isRoundActive,
+            isFirstTurnOfRound,
+            isTied,
+            getCurrentPlayer,
+            getRoundWinner,
+            getCurrentPlayerSymbol
+        };
+        
+    };
+
+    const Session = newSession(); 
     
     const markCell = (row, col) => {
-        const player = getPlayerInTurn();
-        let previousRoundStarter = player1;
-        const togglePreviousStarter = () => {
-            previousRoundStarter = previousRoundStarter === player1 ? player2 : player1;
+
+        if (!Session.isRoundActive() && !getWinner()) {
+            Session.startNewRound();
         }
-        if (
-            _isValidRow(row) &&
-            _isValidColumn(col)
-        ) {
-            const symbol = getPlayerInTurnSymbol();
 
-            if (Gameboard.placeMarker(row, col, symbol) === null) {
-                return;
-            }
+        if (Session.isRoundActive()) {
+            const symbol = Session.getCurrentPlayerSymbol();
+            const player = Session.getCurrentPlayer();
+            const placeMarked = Gameboard.placeMarker(row, col, symbol);
 
-            Gameboard.placeMarker(row, col, symbol);
-
-            if (Gameboard.checkLineWin(symbol, row, col)) {
-                player.incrementScore();
-                Gameboard.reset();
-                _resetTurn(previousRoundStarter);
-                togglePreviousStarter();
-                if (_isWinner(player)) {
-                    winner = player;
-                    return console.log(getWinner(), ' Won the game');
+            if (placeMarked !== null) { // cell was succesfully marked
+                if (Gameboard.checkLineWin(symbol, row, col)) {
+                    Session.endRound(player);
+                    player.incrementScore();
+                    Gameboard.reset();
+                    if (_isWinner(player)){
+                        winner = player;
+                    }
+                } else if (Gameboard.isBoardFull()) {
+                    Session.endRound(null, true);
+                    Gameboard.reset();
                 }
-                return;
             }
-
-            _toggleTurn(); 
         } else {
-            console.log('markCell() ERROR: One or more parameters are invalid values.')
+            console.log('markCel() ERROR: round was not started');
         }
+    
     }
 
-    return { getBoard, getScoreToWin, getWinner, getPlayerInTurn, getPlayerInTurnSymbol, markCell };
+    
+    return { getBoard, getScoreToWin, getWinner, Session, markCell };
 
 };

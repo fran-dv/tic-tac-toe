@@ -8,16 +8,21 @@
 :root {
     --board-lines-clr: black;
     --board-cells-clr: white;
+    --primary-font-clr: black;
+    --symbol-x: images/x-default-light.svg;
+    --symbol-o: images/o-default-light.svg;
+    --icon-edit: images/edit-light.svg;
+
     --gameboard-wd: 35vw;
     --board-size: 3;
     --cells-gap: 1.1%;
-    --cells-width: calc((100% - (var(--cells-gap) * (var(--board-size) - 1))) / var(--board-size));
 }
+
 
 body {
     height: 100vh;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
 }
 
@@ -28,16 +33,16 @@ body {
     background-color: var(--board-lines-clr);
     display: grid;
     justify-items: center;
-    grid-template-columns: repeat(var(--board-size), minmax(0, 1fr));
+    grid-template-columns: repeat(var(--board-size), minmax(100px, 1fr));
     grid-template-rows: repeat(auto-fit, minmax(0, 1fr));
-    /* grid-auto-rows: 1fr; */
     gap: var(--cells-gap);
 }
 
 #gameboard > .cell {
     aspect-ratio: 1;
     background-color: var(--board-cells-clr);
-    min-width: var(--cells-width);
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -48,3 +53,4 @@ body {
     width: 50%; 
     height: auto;
 }
+

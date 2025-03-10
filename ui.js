@@ -47,37 +47,13 @@ const displayBoard = (Gameboard) => {
     }
 }
 
-const symbolStyles = () => {
-
-    const styles = {
-        xDefault : './images/x-symbol-default.svg',
-        oDefault : './images/o-symbol-default.svg',
-    }
-
-    let [currentX, currentO] = [styles.xDefault, styles.oDefault];
-
-    const getSymbolImgUrl = (symbol) => {
-        return symbol === 'x' ? currentX :
-               symbol === 'o' ? currentO :
-               null;
-    }
-
-    return { getSymbolImgUrl }
-}
-
-
-const appearance = symbolStyles();
-
-
 const createSymbol = (aSymbol) => {
     aSymbol = String(aSymbol);
     if (aSymbol === 'x' || aSymbol === 'o') {
         const symbolImg = document.createElement('img');
-        symbolImg.setAttribute('class', 'symbol');
-        
-        const symbolImgUrl = appearance.getSymbolImgUrl(aSymbol);
-
-        symbolImg.setAttribute('src', symbolImgUrl);
+        symbolImg.className = 'symbol';    
+        const symbolImgUrl = getComputedStyle(document.documentElement).getPropertyValue(`--symbol-${aSymbol}`).trim();
+        symbolImg.src = symbolImgUrl;
         return symbolImg;
     } else {
         console.log(`createSymbol() ERROR: ${aSymbol} is not valid. (only 'x' or 'o' are allowed)`);
@@ -122,9 +98,16 @@ const clickOnCell = (cell, Game) => {
 
 }
 
+const newPlayerView = (Player) => {
+
+}
+
 
 const Game = newGame();
+const players = Game.getPlayers();
+
 displayBoard(Game.getBoard());
+
 const gameboardDiv = document.querySelector('#gameboard');
 
 gameboardDiv.addEventListener('click', function(event) {
@@ -132,4 +115,3 @@ gameboardDiv.addEventListener('click', function(event) {
     if (cell === null) { return };
     clickOnCell(cell, Game);
 })
-

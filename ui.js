@@ -24,6 +24,7 @@ const displayBoard = (Gameboard) => {
         cell.setAttribute('class', 'cell');
         cell.setAttribute('data-x', String(x));
         cell.setAttribute('data-y', String(y));
+        cell.setAttribute('data-action', 'mark-cell');
         return cell;
     }
 
@@ -47,17 +48,38 @@ const displayBoard = (Gameboard) => {
     }
 }
 
+const getSymbolUrl = (aSymbol) => {
+    return getComputedStyle(document.documentElement).getPropertyValue(`--symbol-${aSymbol}`).trim()
+}
+
 const createSymbol = (aSymbol) => {
     aSymbol = String(aSymbol);
     if (aSymbol === 'x' || aSymbol === 'o') {
         const symbolImg = document.createElement('img');
         symbolImg.className = 'symbol';    
-        const symbolImgUrl = getComputedStyle(document.documentElement).getPropertyValue(`--symbol-${aSymbol}`).trim();
-        symbolImg.src = symbolImgUrl;
+        symbolImg.src = getSymbolUrl(aSymbol);
         return symbolImg;
     } else {
         console.log(`createSymbol() ERROR: ${aSymbol} is not valid. (only 'x' or 'o' are allowed)`);
         return null;
+    }
+}
+
+const updatePlayersInfo = (Game) => {
+    const players = Game.getPlayers();
+    if (players.length === 2) {
+        for (let i = 0; i < players.length; i++) {
+            const playerNumber = i === 0 ? 'one' : 'two';
+            const playerDivClass = `.player-section.${playerNumber}`;
+            const nameH2 = document.querySelector(`${playerDivClass} > .name-section > .name`);
+            nameH2.textContent = players[i].getName();
+            const avatarImg = document.querySelector(`${playerDivClass} > .avatar`);
+            avatarImg.src = getSymbolUrl(Game.Session.getSymbolOfPlayer(players[i]));
+            const scoreCounter = document.querySelector(`${playerDivClass} > .score-section > .score`);
+            scoreCounter.textContent = players[i].getScore();
+        }
+    } else {
+        return console.log('displayPlayersInfo() ERROR: The function supports only two players');
     }
 }
 
@@ -68,9 +90,7 @@ const displayVictory = (Game) => {
 let firstClick = true;
 
 const clickOnCell = (cell, Game) => {
-
     const [x, y] = [parseInt(cell.dataset.x), parseInt(cell.dataset.y)];
-    
     const [row, col] = toLogicCoordinates(x, y, Game.getBoard().getBoardSize());
     
     if (Game.getBoard().isCellEmpty(row, col)) {
@@ -90,28 +110,76 @@ const clickOnCell = (cell, Game) => {
         cell.appendChild(symbolImg);
 
         Game.Session.switchTurn();
+        updatePlayersInfo(Game);
 
         if (Game.getWinner()) {
             displayVictory(Game);
         }
     }
-
 }
 
-const newPlayerView = (Player) => {
-
+const editName = (Game, input, nameH2, editButton) => {
+    const playerIndex = input.dataset.player === 'one' ? 0 : 1;
+    if (input.value){
+        Game.getPlayers()[playerIndex].setName(input.value);
+        updatePlayersInfo(Game);
+    } else {
+        editButton.style.display = 'block'
+    }
+    input.style.display = 'none';
+    nameH2.style.display = 'block';
 }
 
+const clickOnEditName = (buttonOrH2, Game) => {
+    const playerNumber = buttonOrH2.dataset.player;
+    const nameH2 = document.querySelector(`.player-section.${playerNumber} .name`);
+    const input = document.querySelector(`.player-section.${playerNumber} .new-name`);
+    const editButton = document.querySelector(`.player-section.${playerNumber} .edit`);
+    editButton.style.display = 'none';
+    nameH2.style.display = 'none';
+    input.style.display = 'block';
+    input.focus();
 
-const Game = newGame();
-const players = Game.getPlayers();
+    if (input.dataset.listeners === 'false') {
+        input.addEventListener('keydown', (key) => {
+            if (input.style.display !== 'none' && key.code === 'Enter') {
+                editName(Game, input, nameH2, editButton);
+            }
+        })
+        input.addEventListener('blur', () => {
+            editName(Game, input, nameH2, editButton);
+        })
+        input.dataset.listeners = 'true';
+    }
+}
 
-displayBoard(Game.getBoard());
+// a Classic Tictactoe starts by default
+let Game = (function (gameConfiguration){
+    const defaultGame = newGame(gameConfiguration);
+    displayBoard(defaultGame.getBoard());
+    updatePlayersInfo(defaultGame);
+    return defaultGame;
+})();
 
-const gameboardDiv = document.querySelector('#gameboard');
+const toggleTheme = () => {
+    const root = document.documentElement;
+    root.className = root.className === 'theme-dark' ? 'theme-light' : 'theme-dark';
+}
 
-gameboardDiv.addEventListener('click', function(event) {
-    const cell = event.target.closest('.cell');
-    if (cell === null) { return };
-    clickOnCell(cell, Game);
+// general event listener
+document.querySelector('body').addEventListener('click', (event) => {
+    const target = event.target.closest('[data-action]');
+    if (target === null) { return };
+    switch (target.dataset.action) {
+        case 'toggle-theme':
+            toggleTheme();
+            break;
+        case 'mark-cell':
+            clickOnCell(target, Game);
+            break;
+        case 'edit-name':
+            clickOnEditName(target, Game);
+            break;
+    }
 })
+

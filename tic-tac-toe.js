@@ -359,6 +359,8 @@ const newPlayer = (aName) => {
     return { getName, setName, getScore, incrementScore };
 }
 
+
+
 const setGameConfig = (player1, player2, Gameboard, scoreToWin) => {
     return {player1, player2, Gameboard, scoreToWin};
 }
@@ -398,6 +400,8 @@ const newGame = (configuration) => {
     const players = [player1, player2];
 
     const getBoard = () => Gameboard;
+
+    const getPlayers = () => players;
 
     const _isValidRow = (row) => {
         return row < Gameboard.getBoardSize();
@@ -449,10 +453,13 @@ const newGame = (configuration) => {
         const isFirstTurnOfRound = () => firstTurnOfRound;
         const isTied = () => tied;
         const getCurrentPlayer = () => currentPlayer;
-        const getCurrentPlayerSymbol = () => {
-            return currentPlayer === players[0] ? 'x' :
-                   currentPlayer === players[1] ? 'o' : 
+        const getSymbolOfPlayer = (aPlayer) => {
+            return aPlayer === players[0] ? 'x' :
+                   aPlayer === players[1] ? 'o' : 
                    null;
+        };
+        const getCurrentPlayerSymbol = () => {
+            return getSymbolOfPlayer(getCurrentPlayer());
         };
         const getRoundWinner = () => roundWinner;
 
@@ -466,6 +473,7 @@ const newGame = (configuration) => {
             isTied,
             getCurrentPlayer,
             getRoundWinner,
+            getSymbolOfPlayer,
             getCurrentPlayerSymbol
         };
         
@@ -498,12 +506,11 @@ const newGame = (configuration) => {
                 }
             }
         } else {
-            console.log('markCel() ERROR: round was not started');
+            console.log('markCell() ERROR: round was not started');
         }
-    
     }
 
     
-    return { getBoard, getScoreToWin, getWinner, Session, markCell };
+    return { getBoard, getPlayers, getScoreToWin, getWinner, Session, markCell };
 
 };

@@ -6,24 +6,92 @@
 }
 
 :root {
-    --board-lines-clr: black;
-    --board-cells-clr: white;
-    --primary-font-clr: black;
-    --symbol-x: images/x-default-light.svg;
-    --symbol-o: images/o-default-light.svg;
-    --icon-edit: images/edit-light.svg;
-
+    --general-bg-color: #EEEEEE;
+    --general-color: #00ADB5;
+    --board-lines-clr: #1f262d;
+    --primary-font-clr: #1f262d;
+    --secondary-font-clr: white;
+    --symbol-x: images/x-default.svg;
+    --symbol-o: images/o-default.svg;
+    --img-filter: brightness(0) saturate(100%) invert(16%) sepia(4%) saturate(1831%) hue-rotate(163deg) brightness(95%) contrast(102%);
     --gameboard-wd: 35vw;
     --board-size: 3;
     --cells-gap: 1.1%;
+    --names-font-size: 2.3vw;
+}
+
+.theme-light {
+    --general-bg-color: #EEEEEE;
+    --general-color: #00ADB5;
+    --board-lines-clr: #303841;
+    --primary-font-clr: #303841;
+    --secondary-font-clr: white;
+    --img-filter: brightness(0) saturate(100%) invert(16%) sepia(4%) saturate(1831%) hue-rotate(163deg) brightness(95%) contrast(102%);
+}
+
+.theme-dark {
+    --general-bg-color: #1f262d;
+    --general-color: #00ADB5;
+    --board-lines-clr: #EEEEEE;
+    --primary-font-clr: #EEEEEE;
+    --secondary-font-clr: white;
+    --img-filter: brightness(0) saturate(100%) invert(99%) sepia(4%) saturate(3%) hue-rotate(323deg) brightness(105%) contrast(87%);
+}
+
+img {
+    filter: var(--img-filter);
 }
 
 
 body {
+    background-color: var(--general-bg-color);
     height: 100vh;
+    display: grid;
+    grid-template-rows: min-content 1fr;
+}
+
+.no-select {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+#header {    
+    display: flex;
+    padding: 1.1rem;
+    align-items: center;
+    gap: 1rem;
+}
+
+#header .icon {
+    --icon-size: 2.5vw;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    cursor: pointer;
+}
+
+.new-game {
+    padding: 1%;
+    background-color: var(--general-color);
+    border: none;
+    border-radius: 10px;
+    margin-left: auto;
+    cursor: pointer;
+}
+
+.new-game > p {
+    color: var(--secondary-font-clr);
+    font-family: 'Iceberg', sans-serif;
+    font-size: 1.4vw;
+    font-weight: bold;
+}
+
+#main-content {
+    width: 100%;
     display: flex;
     justify-content: space-around;
     align-items: center;
+    justify-self: center;
 }
 
 #gameboard {
@@ -40,17 +108,86 @@ body {
 
 #gameboard > .cell {
     aspect-ratio: 1;
-    background-color: var(--board-cells-clr);
+    background-color: var(--general-bg-color);
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .cell > .symbol {
     width: 50%; 
     height: auto;
 }
+
+.player-section {
+    width: 15vw;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3vh;
+}
+
+.player-section h2,
+.player-section h3,
+.player-section p,
+.player-section input {
+    font-family: "Iceberg", sans-serif;
+    color: var(--primary-font-clr);
+    font-weight: 500;
+    font-size: 1.5vw;
+}
+
+
+.player-section > .name-section {
+    justify-content: center;
+    width: 100%;
+    display: flex;
+    gap: 5%;
+}
+
+.player-section > .name-section > .name {
+    font-size: var(--names-font-size);
+    cursor: pointer;
+}
+
+.player-section > .name-section > .new-name  {
+    background-color: var(--general-bg-color);
+    width: 100%;
+    display: none;
+    border: none;
+    font-size: var(--names-font-size);
+    border-bottom: 3px dashed var(--primary-font-clr);
+}
+
+input:focus {
+    outline: none;
+}
+
+.player-section > .name-section > .edit {
+    width: 2vw;
+    cursor: pointer;
+}
+
+.player-section > .score-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.player-section > .score-section > .score {
+    font-size: 6vw;
+}
+
+.player-section > .avatar {
+    width: 60%;
+} 
+
+
+
 

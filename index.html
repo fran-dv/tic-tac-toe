@@ -6,21 +6,57 @@
     <link rel="stylesheet" href="./styles.css">
     <script src="./tic-tac-toe.js" defer></script>
     <script src="./ui.js" defer></script>
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Iceberg&display=swap" rel="stylesheet">
     <title>Tic Tac Toe</title>
 </head>
 <body>
 
-    <div class="player-section">
+    <dialog id="main-menu">
 
-    </div>
-    
-    <div id="gameboard">
-    
-    </div>
+    </dialog>
 
-    <div class="player-section">
+    <header id="header">
+        <a href="https://github.com/fran-dv/tic-tac-toe" target="_blank" rel="noopener noreferrer"><img class="icon" src="images/github.svg" alt="Github Logo"></a>
+        <img class="icon" data-action="toggle-theme" src="images/toggle-theme.svg" alt="Switch theme">
+        <button class="new-game"><p>New game</p></button>
+    </header>
 
-    </div>
+    <main id="main-content">
+
+        <div class="player-section one">
+            <div class="name-section">
+                <h2 title="Edit name" class="name no-select" data-action="edit-name" data-player="one"></h2>
+                <input type="text" placeholder="Your name" class="new-name" data-player="one" data-listeners="false" maxlength="13">
+                <img title="Edit name" class="edit" data-action="edit-name" data-player="one" src="./images/edit.svg" alt="Edit name">
+            </div>
+            
+            <img class="avatar" src="" alt="">
+            <div class="score-section">
+                <h3>Score: </h3>
+                <p class="score"></p>
+            </div>
+        </div>
+        
+        <div id="gameboard">
+        
+        </div>
+
+        <div class="player-section two">
+            <div class="name-section">
+                <h2 class="name no-select" data-action="edit-name" data-player="two"></h2>
+                <input type="text" placeholder="Your name" class="new-name" data-player="two" data-listeners="false" maxlength="13">
+                <img class="edit" data-action="edit-name" data-player="two" src="./images/edit.svg" alt="Edit name">
+            </div>
+            <img class="avatar" src="" alt="">
+            <div class="score-section">
+                <h3>Score: </h3>
+                <p class="score"></p>
+            </div>
+        </div>
+    </main>
 
 </body>
 </html>

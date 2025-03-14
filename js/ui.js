@@ -176,7 +176,7 @@ const editName = (Game, input, nameH2, editButton) => {
             input.addEventListener('keydown', (key) => {
                 sameNameWarning.remove();
             }, { once : true });
-            return;
+            return false;
         }
         Game.getPlayers()[playerIndex].setName(input.value);
         input.value = '';
@@ -187,14 +187,17 @@ const editName = (Game, input, nameH2, editButton) => {
     }
     input.style.display = 'none';
     nameH2.style.display = 'block';
+    return true;
 }
 
 const listenForNameSubmit = (Game, input, nameH2, editButton) => {
     const controller = new AbortController();
     const submitName = (key = null, blur = false) => {
         if ((key !== null && key.code === 'Enter') || blur) {
-            editName(Game, input, nameH2, editButton);
-            controller.abort();
+            const success = editName(Game, input, nameH2, editButton);
+            if (success) {
+                controller.abort();
+            }
         }
     }
     input.addEventListener('keydown', (key) => submitName(key), { signal : controller.signal });

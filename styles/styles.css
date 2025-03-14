@@ -207,6 +207,15 @@ input:focus {
     width: 60%;
 } 
 
+.player-section.in-turn::before {
+    margin-bottom: -3vh;
+    font-size: 5vw;
+    content: '↓';
+    color: var(--general-color);
+    position: fixed;
+    top: 20%;
+}
+
 
 #main-menu {
     --menu-width: 100%;

@@ -60,10 +60,25 @@ const updatePlayersInfo = (Game) => {
     }
 }
 
+const updateTurnIndicator = (Game) => {
+    const currentPlayerNumber = Game.Session.getCurrentPlayer() === Game.getPlayers()[1] ? 'two' : 'one';
+    
+    const otherPlayerNumber = currentPlayerNumber === 'one' ? 'two' : 'one';
+    const currentPlayerDiv = document.querySelector(`.player-section.${currentPlayerNumber}`);
+    const otherPlayerDiv = document.querySelector(`.player-section.${otherPlayerNumber}`);
+
+    if (otherPlayerDiv.classList.contains('in-turn')){
+        otherPlayerDiv.classList.remove('in-turn');
+    }
+
+    currentPlayerDiv.classList.add('in-turn');
+} 
+
 const initGame = (gameConfiguration) => {
     const aGame = newGame(gameConfiguration);
     displayBoard(aGame.getBoard());
     updatePlayersInfo(aGame);
+    updateTurnIndicator(aGame);
     document.querySelector('.score-to-win').textContent = aGame.getScoreToWin();
     document.querySelector('.symbols-to-align').textContent = aGame.getBoard().getSymbolsToWin();
     return aGame;
@@ -155,6 +170,7 @@ const clickOnCell = (cell, Game) => {
         const symbolImg = createSymbol(Game.Session.getCurrentPlayerSymbol());
         cell.appendChild(symbolImg);
         Game.Session.switchTurn();
+        updateTurnIndicator(Game);
         updatePlayersInfo(Game);
         if (Game.getWinner()) {
             displayVictory(Game);

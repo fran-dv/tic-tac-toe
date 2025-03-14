@@ -423,9 +423,16 @@ const newGame = (configuration) => {
         let roundWinner = null;
         let tied = false;
         let firstTurnOfRound = true;
+        let roundStarter = null;
 
         const startNewRound = () => {
-            currentPlayer = players[0];
+            if (roundStarter === players[0]) {
+                roundStarter = players[1];
+                currentPlayer = players[1];
+            } else {
+                roundStarter = players[0];
+                currentPlayer = players[0];
+            }
             roundActive = true;
             roundWinner = null;
             tied = false;

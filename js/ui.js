@@ -239,6 +239,7 @@ const toggleTheme = () => {
 
 const pulseAnimation = (element, dialogToClose = null, modalToOpen = null) => {
     element.classList.add('pulse-animation');
+
     element.addEventListener('animationend', () => {
         element.classList.remove('pulse-animation');
         if (dialogToClose !== null) {
@@ -252,11 +253,15 @@ const pulseAnimation = (element, dialogToClose = null, modalToOpen = null) => {
 
 const clickOnNewGame = (button) => {
     const winScreen = document.querySelector('#win-screen');
-    if (winScreen.open) {
-        winScreen.close();
-    }
     const mainMenu = document.querySelector('#main-menu');
-    pulseAnimation(button, null, mainMenu);
+
+    if (winScreen.open) {
+        pulseAnimation(button, winScreen, mainMenu);
+    } else {
+        pulseAnimation(button, null, mainMenu)
+    }
+
+    
 }
 
 const clickOnCounter = (arrow) => {

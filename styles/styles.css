@@ -1,0 +1,450 @@
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+    --general-bg-color: #EEEEEE;
+    --general-color: #00ADB5;
+    --board-lines-clr: #1f262d;
+    --primary-font-clr: #1f262d;
+    --win-screen-bg-clr: rgb(0, 0, 0, 0.8);
+    --secondary-font-clr: white;
+    --backdrop-color: #3A4750;
+    --symbol-x: images/x-default.svg;
+    --symbol-o: images/o-default.svg;
+    --img-filter: brightness(0) saturate(100%) invert(16%) sepia(4%) saturate(1831%) hue-rotate(163deg) brightness(95%) contrast(102%);
+    --gameboard-wd: 40vw;
+    --board-size: 3;
+    --cells-gap: 0.7%;
+    --names-font-size: 2.3vw;
+}
+
+.theme-light {
+    --general-bg-color: #EEEEEE;
+    --general-color: #00ADB5;
+    --board-lines-clr: #303841;
+    --primary-font-clr: #303841;
+    --secondary-font-clr: white;
+    --img-filter: brightness(0) saturate(100%) invert(16%) sepia(4%) saturate(1831%) hue-rotate(163deg) brightness(95%) contrast(102%);
+}
+
+.theme-dark {
+    --general-bg-color: #1f262d;
+    --general-color: #00ADB5;
+    --board-lines-clr: #EEEEEE;
+    --primary-font-clr: #EEEEEE;
+    --secondary-font-clr: white;
+    --img-filter: brightness(0) saturate(100%) invert(99%) sepia(4%) saturate(3%) hue-rotate(323deg) brightness(105%) contrast(87%);
+}
+
+img {
+    filter: var(--img-filter);
+}
+
+
+body {
+    background-color: var(--general-bg-color);
+    height: 100vh;
+    display: grid;
+    grid-template-rows: min-content 1fr;
+}
+
+dialog {
+    border: none;
+}
+
+.game-info > p,
+#main-content > .player-section > .warning {
+    font-family: Georgia, serif;
+    font-size: 1.3rem;
+    color: var(--primary-font-clr);
+}
+
+.no-select {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+#header {    
+    display: flex;
+    padding: 1.1rem;
+    align-items: center;
+    gap: 1rem;
+}
+
+#header .icon {
+    --icon-size: 2.5vw;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    cursor: pointer;
+}
+
+.new-game {
+    padding: 1%;
+    background-color: var(--general-color);
+    border: none;
+    border-radius: 10px;
+    margin-left: auto;
+    cursor: pointer;
+}
+
+.new-game > p {
+    color: var(--secondary-font-clr);
+    font-family: 'Iceberg', sans-serif;
+    font-size: 1.4vw;
+    font-weight: bold;
+}
+
+#main-content {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    justify-self: center;
+}
+
+#gameboard {
+    width: var(--gameboard-wd);
+    height: var(--gameboard-wd);
+    margin-bottom: 5%;
+    background-color: var(--board-lines-clr);
+    display: grid;
+    justify-items: center;
+    grid-template-columns: repeat(var(--board-size), minmax(0, 1fr));
+    grid-template-rows: repeat(auto-fit, minmax(0, 1fr));
+    gap: var(--cells-gap);
+}
+
+#gameboard > .cell {
+    aspect-ratio: 1;
+    background-color: var(--general-bg-color);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.cell > .symbol {
+    width: 70%; 
+    height: auto;
+}
+
+.game-info {
+    margin-left: 1rem;
+}
+
+.player-section {
+    width: 15vw;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3vh;
+}
+
+.player-section h2,
+.player-section h3,
+.player-section p,
+.player-section input {
+    font-family: 'Iceberg', sans-serif;
+    color: var(--primary-font-clr);
+    font-weight: 500;
+    font-size: 1.5vw;
+}
+
+
+
+
+.player-section > .name-section {
+    justify-content: center;
+    width: 100%;
+    display: flex;
+    gap: 5%;
+}
+
+.player-section > .name-section > .name {
+    font-size: var(--names-font-size);
+    cursor: pointer;
+}
+
+.player-section > .name-section > .new-name  {
+    background-color: var(--general-bg-color);
+    width: 100%;
+    display: none;
+    border: none;
+    font-size: var(--names-font-size);
+    border-bottom: 3px dashed var(--primary-font-clr);
+}
+
+input:focus {
+    outline: none;
+}
+
+.player-section > .name-section > .edit {
+    width: 2vw;
+    cursor: pointer;
+}
+
+.player-section > .score-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.player-section > .score-section > .score {
+    font-size: 6vw;
+}
+
+.player-section > .avatar {
+    width: 60%;
+} 
+
+
+#main-menu {
+    --menu-width: 100%;
+    --menu-height: 70%;
+    background-color: var(--general-color);
+    border: none;
+    z-index: 10;
+    position: fixed;
+    opacity: 1  ;
+    width: var(--menu-width);
+    height: var(--menu-height);
+    max-width: none;
+    top: calc((100% - var(--menu-height)) / 2);
+    border: none;
+    border-radius: 0;
+    box-shadow: 2px 2px 5px rgb(0, 0, 0, 0.4);
+    align-content: center;
+    transform: rotate(35deg) scale(1.3);
+    animation: menuEntrance; 
+    animation-duration: 0.7s;
+    overflow: hidden;
+}
+
+#main-menu::backdrop {
+    background-color: var(--backdrop-color);
+    opacity: 0.8;
+}
+  
+.menu-wrapper {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-35deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu-content {
+    flex: none;
+    width: 40%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 5rem 0 5rem 0; 
+    gap: 1vw;
+}
+
+.menu-content > h1 {
+    font-family: "Iceberg", sans-serif;
+    font-size: 4vw;
+    color: var(--secondary-font-clr);
+    letter-spacing: 0.3rem;
+    text-shadow: 2px 5px 4px var(--backdrop-color);
+}
+
+.game-configuration {
+    width: 80%;
+    font-family: "Iceberg", sans-serif;
+    font-size: 2rem;
+    color: var(--secondary-font-clr);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 2rem;
+    align-self: center;
+}
+
+#points {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.game-configuration .points-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: -2rem;
+}
+
+.game-configuration .counter-widget {
+    margin-left: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(2, 1fr);
+    align-items: center;
+}
+
+.game-configuration .counter-widget > p {
+    font-size: 3.3rem;
+    grid-row: 1 / -1;
+    grid-column: 1;
+    padding-top: 6px;
+}
+
+.game-configuration .counter-widget > .arrow {
+    width: 1.5rem;
+    grid-column: 2;
+    align-self: end;
+    justify-self: center;
+    cursor: pointer;
+}
+
+.game-configuration .counter-widget > .arrow.down {
+    transform: rotate(180deg);
+    align-self: start;
+}
+
+fieldset {
+    border: none;
+}
+
+.game-configuration .fieldset-content {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(min-content, 1fr));
+    
+}
+
+.game-configuration .fieldset-content legend {
+    grid-column: 1 / 4;
+    grid-row: 1;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.game-configuration .fieldset-content div {
+    grid-row: 2;
+    justify-self: center;
+    cursor: pointer;
+}
+
+.game-configuration .fieldset-content [type=radio] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.game-configuration .fieldset-content [type=radio] + p,
+.game-configuration .fieldset-content [type=radio] + span {
+    cursor: pointer;
+    text-shadow: none;
+}
+
+.game-configuration .fieldset-content [type=radio] + span {
+    padding: 6px;
+}
+
+.game-configuration .fieldset-content [type=radio]:checked + p,
+.game-configuration .fieldset-content [type=radio]:checked + span {
+    border-bottom: 2px dashed var(--backdrop-color);
+}
+
+.game-configuration img {
+    width: 3rem;
+    height: auto;
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(103deg) brightness(110%) contrast(101%);
+}
+
+.game-configuration .fieldset-content span {
+    display: flex;
+    flex: 1;
+    
+}
+
+.menu-content button {
+    width: 45%;
+    height: auto;
+    border: none;
+    background-color: var(--secondary-font-clr);
+    align-self: flex-end;
+    margin: 2rem 0 0 0;
+    border-radius: 1rem;
+    padding: 1.5% 1% 0 1%;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 2px 5px 4px var(--backdrop-color);
+}
+
+.menu-content button > p {
+    font-family: "Iceberg", sans-serif;
+    font-size: 2vw;
+    color: var(--general-color);
+    text-align: center;
+    letter-spacing: 0.3rem;
+    align-self: center;
+}
+
+.menu-content button > p::after {
+    content: ' ⮞';
+}
+
+#win-screen > .win-content {
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+    background-color: var(--win-screen-bg-clr);
+    border: none;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 7%;
+    animation: fadeIn 1.5s;
+}
+
+.win-announcement,
+.actions > button {
+    font-family: "Iceberg", sans-serif;
+    color: var(--secondary-font-clr);
+}
+
+.win-announcement {
+    font-size: 4vw;
+}
+
+.win-img {
+    width: 25vw;
+    filter: none;
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(103deg) brightness(110%) contrast(101%);
+}
+
+.actions {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    gap: 5%;
+}
+
+.actions > button {
+    width: 40%;
+    font-size: 2.5vw;
+    padding: 2%;
+    border: none;
+    border-radius: 1rem;
+    background-color: var(--general-color);
+    cursor: pointer;
+}

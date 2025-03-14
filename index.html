@@ -3,32 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./styles.css">
-    <script src="./tic-tac-toe.js" defer></script>
-    <script src="./ui.js" defer></script>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <script src="js/tic-tac-toe.js" defer></script>
+    <script src="js/ui.js" defer></script>
+    <script src="js/coordinates.js"></script>
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Iceberg&display=swap" rel="stylesheet">
     <title>Tic Tac Toe</title>
 </head>
-<body>
-
-    <dialog id="main-menu">
-
-    </dialog>
+<body class="no-select">
 
     <header id="header">
         <a href="https://github.com/fran-dv/tic-tac-toe" target="_blank" rel="noopener noreferrer"><img class="icon" src="images/github.svg" alt="Github Logo"></a>
         <img class="icon" data-action="toggle-theme" src="images/toggle-theme.svg" alt="Switch theme">
-        <button class="new-game"><p>New game</p></button>
+        <div class="game-info">
+            <p><i>Align <span class="symbols-to-align">3</span> symbols to score</i></p>
+            <p><i>First to <span class="score-to-win">3</span> points wins</i></p>
+        </div>
+        <button class="new-game" data-action="new-game"><p>New game</p></button>
     </header>
 
     <main id="main-content">
 
         <div class="player-section one">
             <div class="name-section">
-                <h2 title="Edit name" class="name no-select" data-action="edit-name" data-player="one"></h2>
+                <h2 title="Edit name" class="name" data-action="edit-name" data-player="one"></h2>
                 <input type="text" placeholder="Your name" class="new-name" data-player="one" data-listeners="false" maxlength="13">
                 <img title="Edit name" class="edit" data-action="edit-name" data-player="one" src="./images/edit.svg" alt="Edit name">
             </div>
@@ -39,14 +41,14 @@
                 <p class="score"></p>
             </div>
         </div>
-        
+
         <div id="gameboard">
-        
+    
         </div>
 
         <div class="player-section two">
             <div class="name-section">
-                <h2 class="name no-select" data-action="edit-name" data-player="two"></h2>
+                <h2 title="Edit name" class="name no-select" data-action="edit-name" data-player="two"></h2>
                 <input type="text" placeholder="Your name" class="new-name" data-player="two" data-listeners="false" maxlength="13">
                 <img class="edit" data-action="edit-name" data-player="two" src="./images/edit.svg" alt="Edit name">
             </div>
@@ -57,6 +59,108 @@
             </div>
         </div>
     </main>
+
+    <dialog id="win-screen" class="no-select">
+        <div class="win-content">
+            <h1 class="win-announcement">Robert won the game!!</h1>
+            <img class="win-img" src="" alt="">
+            <div class="actions">
+                <button data-action="play-again">Play Again</button>
+                <button data-action="new-game" >Customize game</button>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog id="main-menu">
+        <div class="menu-wrapper">
+            <div class="menu-content">
+                <h1>Customize game</h1>
+                <form class="game-configuration no-select" action="#" method="POST">
+                    <div class="points-section">
+                        <label for="points">Points to win: </label>
+                        <input type="number" name="points" id="points" value="3">
+                        <div class="counter-widget">
+                            <img class="arrow up" data-action="increment-counter" src="images/arrow.svg" alt="">
+                            <img class="arrow down" data-action="decrement-counter" src="images/arrow.svg" alt="">
+                            <p>3</p>
+                        </div>
+                    </div>
+                    <div>
+                        <fieldset>
+
+                            <div class="fieldset-content">
+
+                                <legend>Board size:</legend>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="board-size" id="classic" data-action="set-board-size" value="3" checked />
+                                        <p>Classic</p>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="board-size" id="large" data-action="set-board-size" value="5" />
+                                        <p>L</p>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="board-size" id="extra-large" data-action="set-board-size" value="7" />
+                                        <p>XL</p>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="board-size" id="extreme" data-action="set-board-size" value="9"/>
+                                        <p><i>Extreme</i></p>
+                                    </label>
+                                </div>
+
+                            </div>
+
+                        </fieldset>
+                    </div>
+                    <div>
+                        <fieldset>
+
+                            <div class="fieldset-content">
+                                <legend>Symbols:</legend>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="symbol" id="degault" data-action="set-symbol" value="default" checked />
+                                        <span>
+                                            <img src="images/x-default.svg" alt="Default X symbol">
+                                        </span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="symbol" id="genres" data-action="set-symbol" value="genres" />
+                                        <span>
+                                            <img src="images/x-genres.svg" alt="Genres style X symbol">
+                                        </span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="symbol" id="suits" data-action="set-symbol" value="suits" />
+                                        <span>
+                                            <img src="images/x-suits.svg" alt="Suits style X symbol">
+                                        </span>
+                                    </label>
+                                </div>
+
+                            </div>
+
+                            
+                        </fieldset>
+                    </div>
+
+                </form>
+                <button type="submit" data-action="start-new-game"><p>PLAY</p></button>
+            </div>
+        </div>
+    </dialog>
 
 </body>
 </html>

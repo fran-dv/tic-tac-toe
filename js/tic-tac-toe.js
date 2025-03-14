@@ -72,8 +72,8 @@ const newGameboard = (sizeInput) => {
     const WIN_CONDITIONS = {
         3 : 3,
         5 : 4,
-        7 : 5,
-        9 : 6
+        7 : 4,
+        9 : 5
     }
 
     const getSymbolsToWin = () => {
@@ -198,14 +198,13 @@ const newGameboard = (sizeInput) => {
                     ++inLineAmount;
                 } else {
                     inLineAmount = 0;
-                }
-
+                };
                 if (inLineAmount >= getSymbolsToWin()) {
                     break;
-                }
-            }
+                };
+            };
             return inLineAmount;
-        }
+        };
 
         const checkDiagonalBelow = () => {
             let inLineAmount = 0;
@@ -230,12 +229,10 @@ const newGameboard = (sizeInput) => {
                 }
             }
             return inLineAmount;
-        }
-
+        };
         const symbolsInLine = checkDiagonalAbove() + checkDiagonalBelow();
 
         return symbolsInLine === getSymbolsToWin();
-
     }
 
     const _checkAntiDiagonalInLine = (row, col, symbol) => {        
@@ -332,7 +329,6 @@ const newGameboard = (sizeInput) => {
         return true;
     }
     
-
     return { 
         reset, 
         placeMarker, 
@@ -341,7 +337,8 @@ const newGameboard = (sizeInput) => {
         getBoardSize, 
         checkLineWin, 
         isBoardEmpty, 
-        isBoardFull 
+        isBoardFull,
+        getSymbolsToWin
     };
 }
 
@@ -352,73 +349,72 @@ const newPlayer = (aName) => {
     const getName = () => name;
     const setName = (otherName) => {
         name = otherName;
-    }
+    };
     const getScore = () => score;
     const incrementScore = () => ++score;
+    const resetScore = () => score = 0;
 
-    return { getName, setName, getScore, incrementScore };
-}
+    return { 
+        getName,
+        setName,
+        getScore,
+        incrementScore,
+        resetScore
+    };
+};
 
 
 
 const setGameConfig = (player1, player2, Gameboard, scoreToWin) => {
     return {player1, player2, Gameboard, scoreToWin};
-}
+};
 
 const newGame = (configuration) => {
-    
     const defaultConfig = {
         player1 : newPlayer('player one'),
         player2 : newPlayer('player two'),
         Gameboard : newGameboard(3, 3),
         scoreToWin : 3,
-    }
-
+    };
     const  _isValidPlayer = (player) => {
         return (
                 player &&
-                player.getName() &&
-                player.getScore() &&
-                player.incrementScore()
+                player.getName &&
+                player.getScore &&
+                player.incrementScore
         );
-    }
-
+    };
     const _isValidGameConfig = (config) => {
         return (
-                config && 
+                config &&
                 (config.player1 && _isValidPlayer(config.player1)) &&
                 (config.player2 && _isValidPlayer(config.player2)) &&
                 config.Gameboard &&
                 (config.scoreToWin && typeof config.scoreToWin === 'number' && config.scoreToWin > 0)
         );
-    }
+    };
 
     const config = _isValidGameConfig(configuration) ? configuration : defaultConfig;
-
     const { player1, player2, Gameboard, scoreToWin } = config;
     let winner = null;
     const players = [player1, player2];
 
     const getBoard = () => Gameboard;
-
+    const getConfiguration = () => {
+        return config;
+    };
     const getPlayers = () => players;
-
     const _isValidRow = (row) => {
         return row < Gameboard.getBoardSize();
-    }
-
+    };
     const _isValidColumn = (col) => {
         return col < Gameboard.getBoardSize();
-    }
-
+    };
     const getScoreToWin = () => scoreToWin;
-
     const getWinner = () => winner;
-
     const _isWinner = (player) => {
         return player.getScore() === getScoreToWin();
-    }
-
+    };
     const newSession = () => {
         const symbols = ['x', 'o'];
         let currentRound = 1;
@@ -434,20 +430,17 @@ const newGame = (configuration) => {
             roundWinner = null;
             tied = false;
             firstTurnOfRound = true;
-        }
-
+        };
         const switchTurn = () => {
             currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
             firstTurnOfRound = false;
-        }
-
+        };
         const endRound = (winner = null, isTied = false) => {
             roundActive = false;
             roundWinner = winner;
             tied = isTied;
             currentRound++;
-        }
-
+        };
         const getCurrentRound = () => currentRound;
         const isRoundActive = () => roundActive;
         const isFirstTurnOfRound = () => firstTurnOfRound;
@@ -476,22 +469,17 @@ const newGame = (configuration) => {
             getSymbolOfPlayer,
             getCurrentPlayerSymbol
         };
-        
     };
 
     const Session = newSession(); 
-    
     const markCell = (row, col) => {
-
         if (!Session.isRoundActive() && !getWinner()) {
             Session.startNewRound();
         }
-
         if (Session.isRoundActive()) {
             const symbol = Session.getCurrentPlayerSymbol();
             const player = Session.getCurrentPlayer();
             const placeMarked = Gameboard.placeMarker(row, col, symbol);
-
             if (placeMarked !== null) { // cell was succesfully marked
                 if (Gameboard.checkLineWin(symbol, row, col)) {
                     Session.endRound(player);
@@ -510,7 +498,13 @@ const newGame = (configuration) => {
         }
     }
 
-    
-    return { getBoard, getPlayers, getScoreToWin, getWinner, Session, markCell };
-
+    return { 
+        getBoard,
+        getConfiguration,
+        getPlayers,
+        getScoreToWin,
+        getWinner,
+        Session,
+        markCell
+    };
 };
